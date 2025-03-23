@@ -1,7 +1,6 @@
 .env
 node_modules/
 .idea/
-.database.db
+database.db
 .vscode/
-database/
-prettier
+.prettierrc
