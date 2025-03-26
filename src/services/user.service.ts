@@ -70,14 +70,14 @@ export class UserService {
             throw error;
         }
     };
-    static async loginUser(email: string, password: string,req: FastifyRequest){
-        try{
-            const {result, status, error} = await GetData(db, 'SELECT * FROM users WHERE email = ?', [email])
-            if (error) {throw error};
-            if (status == 1){
+    static async loginUser(email: string, password: string, req: FastifyRequest) {
+        try {
+            const { result, status, error } = await GetData(db, 'SELECT * FROM users WHERE email = ?', [email])
+            if (error) { throw error };
+            if (status == 1) {
                 const user = result as User;
                 const isMatch = await compareHash(password, user.password_hash);
-                if(!isMatch){
+                if (!isMatch) {
                     throw new Error('Invalid credentials');
                 }
                 const tokenPayload = {
@@ -85,7 +85,7 @@ export class UserService {
                     email: user.email,
                     role: user.role
                 };
-                const token = generateToken(tokenPayload,req);
+                const token = generateToken(tokenPayload, req);
                 return {
                     token,
                     user: {
@@ -101,7 +101,7 @@ export class UserService {
             }
             throw new Error('User not found');
         }
-        catch (error){
+        catch (error) {
             throw error;
         }
     };

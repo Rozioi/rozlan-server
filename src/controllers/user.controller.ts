@@ -73,12 +73,12 @@ export const userController = {
         }
         return reply.send(user);
     },
-    async loginUser(req: FastifyRequest<{Body: {email:string; password: string}}>, reply:FastifyReply){
-        const {email,password} = req.body;
-        try{
-            const result = await UserService.loginUser(email,password,req);
-            return reply.status(200).send({token: result?.token, user: result?.user});
-        } catch (error){
+    async loginUser(req: FastifyRequest<{ Body: { email: string; password: string } }>, reply: FastifyReply) {
+        const { email, password } = req.body;
+        try {
+            const result = await UserService.loginUser(email, password, req);
+            return reply.status(200).send({ token: result?.token, user: result?.user });
+        } catch (error) {
             return reply.status(500).send(error);
         }
     },
@@ -91,8 +91,8 @@ export const userController = {
             return reply.status(500).send('Internal Server Error');
         }
     },
-    async token(req:FastifyRequest, reply: FastifyReply){
-        return reply.send(req.server.jwt.sign({id: 1}));
+    async token(req: FastifyRequest, reply: FastifyReply) {
+        return reply.send(req.server.jwt.sign({ id: 1 }));
     }
 
 };

@@ -8,10 +8,15 @@ interface IFastifyRouteDepends {
 
 export type TRouteFunction = (fastify: FastifyInstance, _opts: FastifyPluginOptions, _next: FastifyNext) => void | Promise<void>;
 
-export function FastifyRoute(depends: IFastifyRouteDepends, handler: TRouteFunction, options: RegisterOptions) {
+export function FastifyRoute(depends: IFastifyRouteDepends, handlers: TRouteFunction[], options: RegisterOptions) {
     const { fastify } = depends;
-    fastify.register(
-        (fastify: FastifyInstance, _opts: FastifyPluginOptions, _next: FastifyNext) => handler(fastify, _opts, _next),
-        options
-    );
+    handlers.forEach((handler) => {
+        fastify.register(handler,options)
+    })
+    // in my test, the lower code is slower than the upper one.
+    // fastify.register(async (instance) => {
+    //     for (const handler of handlers){
+    //         await handler(instance, {}, async () => {});
+    //     };
+    // }, options)
 }
