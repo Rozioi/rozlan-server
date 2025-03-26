@@ -1,3 +1,5 @@
+import { FastifyInstance, FastifyRequest } from "fastify";
+import { generateToken } from "../plugins/jwt";
 import { User } from "../controllers/user.controller";
 import { db, GetData, insertRecord } from "../plugins/db";
 import { compareHash, hashPassword } from "../utils/hash";
@@ -47,7 +49,7 @@ export class UserService {
 
     static async getUserByID(id: number) {
         try {
-            const { result, status, error } = await GetData(db, 'SELECT * FROM users Where id = ?', [id]);
+            const { result, status, error } = await GetData(db, 'SELECT id,name,email,role,bio,is_active, rating, created_at FROM users Where id = ?', [id]);
             if (error) {
                 throw new Error(`${error}`);
             }
@@ -68,21 +70,39 @@ export class UserService {
             throw error;
         }
     };
-    static async loginUser(email: string, password: string){
+    static async loginUser(email: string, password: string,req: FastifyRequest){
         try{
             const {result, status, error} = await GetData(db, 'SELECT * FROM users WHERE email = ?', [email])
             if (error) {throw error};
             if (status == 1){
                 const user = result as User;
-                const isMatch = compareHash(password, user.password_hash);
+                const isMatch = await compareHash(password, user.password_hash);
                 if(!isMatch){
                     throw new Error('Invalid credentials');
                 }
-                
+                const tokenPayload = {
+                    id: user.id,
+                    email: user.email,
+                    role: user.role
+                };
+                const token = generateToken(tokenPayload,req);
+                return {
+                    token,
+                    user: {
+                        id: user.id,
+                        email: user.email,
+                        name: user.name,
+                        role: user.role,
+                        bio: user.bio,
+                        rating: user.rating,
+                        is_active: user.is_active
+                    }
+                };
             }
+            throw new Error('User not found');
         }
         catch (error){
-
+            throw error;
         }
     };
 }

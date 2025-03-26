@@ -1,13 +1,14 @@
 
-import { FastifyInstance } from "fastify";
+import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { userController } from "../controllers/user.controller"
 import { TRouteFunction } from "../utils/fastify-route";
 
-export const UserRoutes: TRouteFunction = (fastify: FastifyInstance,_opts, done) => {
-    fastify.get('/users/:id', userController.getUserById);
-    fastify.put('/users/:id/:amount', userController.increaseRating);
-    fastify.put('/users/:id/active', userController.toogleAccountStatus);
-    fastify.delete('/users/:id', userController.deleteAccount);
-    fastify.post('/users/', userController.createNewUser);
-    done();
+export const UserRoutes: TRouteFunction = (fastify: FastifyInstance, _opts, done) => {
+  fastify.get('/users/:id',{preHandler: fastify.verifyJWT}, userController.getUserById as any);
+  fastify.put('/users/:id/:amount',{preHandler: fastify.verifyJWT}, userController.increaseRating as any);
+  fastify.put('/users/:id/active',{preHandler: fastify.verifyJWT}, userController.toogleAccountStatus as any);
+  fastify.delete('/users/:id',{preHandler: fastify.verifyJWT}, userController.deleteAccount as any);
+  fastify.post('/login', userController.loginUser);
+  fastify.post('/create', userController.createNewUser);
+  done();
 }
