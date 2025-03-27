@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyRequest } from "fastify";
+import { FastifyRequest } from "fastify";
 import { generateToken } from "../plugins/jwt";
 import { User } from "../controllers/user.controller";
 import { db, GetData, insertRecord } from "../plugins/db";
@@ -9,7 +9,7 @@ export class UserService {
     static async increaseRating(id: number, rating: number, oldRating: number) {
         try {
             const newRating = oldRating + rating;
-            const { result, status, error } = await insertRecord(
+            const { error } = await insertRecord(
                 db,
                 'UPDATE users SET rating = ? WHERE id = ?',
                 [newRating, id]
