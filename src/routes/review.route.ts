@@ -6,5 +6,6 @@ export const ReviewRoute: TRouteFunction = (fastify: FastifyInstance, _opts,done
     fastify.get('/reviews/user/:id', ReviewController.getReviewsByUserId as any);
     fastify.get('/reviews/author/:id', ReviewController.getReviewsByAuthorId as any);
     fastify.post('/review/create', ReviewController.createReview as any);
+    fastify.put('/review/:id/:amount', { preHandler: fastify.verifyJWT }, ReviewController.increaseRating as any);
     done();
 }

@@ -17,22 +17,7 @@ export interface User {
 
 
 export const userController = {
-    async increaseRating(req: FastifyRequest<{ Params: { id: string, amount: string } }>, reply: FastifyReply) {
-        const id = parseInt(req.params.id);
-        const rating = parseFloat(req.params.amount);
-        if (isNaN(id) || isNaN(rating)) {
-            return reply.status(400).send({ error: "Invalid parameters" });
-        }
-        const user: User = await UserService.getUserByID(id);
-        if (!user) {
-            return reply.status(404).send({ error: "User not found" });
-        }
-        const updatedUser = await UserService.increaseRating(id, rating, user.rating ? user.rating : 0);
-        if (!updatedUser) {
-            return reply.status(500).send({ error: "Failed to update user rating" });
-        }
-        return reply.send({ message: "Rating increased", user: updatedUser });
-    },
+    
 
     async toogleAccountStatus(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
         const id = parseInt(req.params.id);

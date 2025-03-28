@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { ReviewService } from "../services/review.service";
 import { UserService } from "../services/user.service";
+import { User } from "./user.controller";
 
 export const ReviewController = {
     async getReviewsByUserId(req: FastifyRequest<{Params: {id: string}}>, reply: FastifyReply) {
@@ -45,8 +46,11 @@ export const ReviewController = {
                 return reply.status(404).send({ error: 'Author not found' });
             }
     
-            // Создание отзыва
+            
             const result = await ReviewService.createReview(review, rating, user_id, author_id);
+            if (result){
+                await ReviewService.increaseRating(author_id, rating, author.rating ? author.rating : 0);
+            }
             return reply.send(result);
         } catch (error){
             return reply.status(500).send(error);
@@ -67,5 +71,21 @@ export const ReviewController = {
             return reply.status(500).send(error);
         }
 
-    }
+    },
+    async increaseRating(req: FastifyRequest<{ Params: { id: string, amount: string } }>, reply: FastifyReply) {
+            const id = parseInt(req.params.id);
+            const rating = parseFloat(req.params.amount);
+            if (isNaN(id) || isNaN(rating)) {
+                return reply.status(400).send({ error: "Invalid parameters" });
+            }
+            const user: User = await UserService.getUserByID(id);
+            if (!user) {
+                return reply.status(404).send({ error: "User not found" });
+            }
+            const updatedUser = await ReviewService.increaseRating(id, rating, user.rating ? user.rating : 0);
+            if (!updatedUser) {
+                return reply.status(500).send({ error: "Failed to update user rating" });
+            }
+            return reply.send({ message: "Rating increased", user: updatedUser });
+        },
 }

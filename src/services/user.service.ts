@@ -6,26 +6,7 @@ import { compareHash, hashPassword } from "../utils/hash";
 
 
 export class UserService {
-    static async increaseRating(id: number, rating: number, oldRating: number) {
-        try {
-            const newRating = oldRating + rating;
-            const { error } = await insertRecord(
-                db,
-                'UPDATE users SET rating = ? WHERE id = ?',
-                [newRating, id]
-            );
-            if (error) {
-                throw new Error(`Database error: ${error}`);
-            }
-
-            const updatedUser = await UserService.getUserByID(id);
-            return updatedUser;
-
-        } catch (error) {
-            console.error("Error updating rating:", error);
-            throw new Error("Failed to update rating");
-        }
-    };
+    
     static async deleteAccount(id: number) {
         try {
             const { result, status, error } = await insertRecord(db, 'DELETE FROM users WHERE id = ?', [id]);
