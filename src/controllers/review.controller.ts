@@ -2,6 +2,14 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { ReviewService } from "../services/review.service";
 import { UserService } from "../services/user.service";
 import { User } from "./user.controller";
+export interface Review {
+    id: number;
+    user_id: number;
+    author_id: number;
+    rating: number;
+    review: string;
+    created_at: Date;
+}
 
 export const ReviewController = {
     async getReviewsByUserId(req: FastifyRequest<{Params: {id: string}}>, reply: FastifyReply) {
@@ -87,5 +95,34 @@ export const ReviewController = {
                 return reply.status(500).send({ error: "Failed to update user rating" });
             }
             return reply.send({ message: "Rating increased", user: updatedUser });
-        },
+    },
+    async deleteReview(req: FastifyRequest<{ Params: { id: string, user_id: string } }>, reply: FastifyReply) {
+        try {
+            const id = parseInt(req.params.id);
+            const user_id = parseInt(req.params.user_id);
+    
+            if (isNaN(id) || isNaN(user_id)) {
+                return reply.code(400).send({ error: 'Invalid parameters' });
+            }
+    
+            const review: Review = await ReviewService.getReviewsById(id);
+            if (!review) {
+                return reply.code(404).send({ error: "Review not found" });
+            }
+            if (review.author_id !== user_id) {
+                return reply.code(403).send({ error: 'You are not the author of this review' });
+            }
+    
+            const result = await ReviewService.deleteReview(id, user_id);
+            if (!result) {
+                return reply.code(500).send({ error: 'Failed to delete review' });
+            }
+    
+            return reply.code(200).send({ message: "Review successfully deleted" });
+        } catch (error) {
+            req.log.error(error); // Логируем ошибку
+            return reply.code(500).send({ error: 'Internal Server Error' });
+        }
+    }
+    
 }
