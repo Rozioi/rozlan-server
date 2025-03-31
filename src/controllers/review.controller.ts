@@ -120,7 +120,7 @@ export const ReviewController = {
     
             return reply.code(200).send({ message: "Review successfully deleted" });
         } catch (error) {
-            req.log.error(error); // Логируем ошибку
+            req.log.error(error); 
             return reply.code(500).send({ error: 'Internal Server Error' });
         }
     }

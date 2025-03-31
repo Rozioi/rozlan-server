@@ -19,6 +19,10 @@ db.serialize(() => {
         )
     `);
     db.run(`
+        CREATE TABLE IF NOT EXISTS categories (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE)`)
+    db.run(`
     CREATE TABLE IF NOT EXISTS reviews (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
@@ -29,6 +33,20 @@ db.serialize(() => {
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
         FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
     )
+    `);
+    db.run(`
+    CREATE TABLE IF NOT EXISTS projects (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        client_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL,
+        category_id INTEGER,
+        budget FLOAT NOT NULL,
+        status TEXT NOT NULL,
+        created_at DATETIME,
+        FOREIGN KEY (client_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+     )
     `);
 });
 
@@ -62,11 +80,11 @@ export async function insertRecord<ReturnT>(db: Database, sql: string, values?: 
     });
 }
 
-export async function GetAllData<ReturnT>(db:Database, sql: string, values?: any[]){
-    return new Promise<IResponse<ReturnT>>((res,rej) => {
-        db.all(sql,values ?? [], (err,rows:any) => {
-            if (err){rej({status:0, error: err, result: null})}
-            else{res({status:1, error:'', result:rows || null})}
+export async function GetAllData<ReturnT>(db: Database, sql: string, values?: any[]) {
+    return new Promise<IResponse<ReturnT>>((res, rej) => {
+        db.all(sql, values ?? [], (err, rows: any) => {
+            if (err) { rej({ status: 0, error: err, result: null }) }
+            else { res({ status: 1, error: '', result: rows || null }) }
         })
     })
 }
