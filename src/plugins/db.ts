@@ -44,6 +44,7 @@ db.serialize(() => {
         budget FLOAT NOT NULL,
         status TEXT NOT NULL,
         created_at DATETIME,
+        updated_at DATETIME,
         FOREIGN KEY (client_id) REFERENCES users(id) ON DELETE CASCADE,
         FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
      )

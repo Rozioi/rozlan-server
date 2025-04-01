@@ -11,7 +11,7 @@ export type TRouteFunction = (fastify: FastifyInstance, _opts: FastifyPluginOpti
 export function FastifyRoute(depends: IFastifyRouteDepends, handlers: TRouteFunction[], options: RegisterOptions) {
     const { fastify } = depends;
     handlers.forEach((handler) => {
-        fastify.register(handler,options)
+        fastify.register(handler, options)
     })
     // in my test, the lower code is slower than the upper one.
     // fastify.register(async (instance) => {

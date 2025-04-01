@@ -4,13 +4,13 @@ import { UserService } from "./user.service";
 
 export class ReviewService {
     static async getReviewsById(id: number): Promise<Review> {
-        const { result,status, error } = await GetData(db, `SELECT * FROM reviews WHERE id = ?`, [id]);
-    
+        const { result, status, error } = await GetData(db, `SELECT * FROM reviews WHERE id = ?`, [id]);
+
         if (error) {
             throw new Error(`Database error: ${error}`);
         }
-        return result as Review; 
-    };    
+        return result as Review;
+    };
     static async getReviewsByUserId(id: number) {
         const { result, status, error } = await GetAllData(db, `SELECT * FROM reviews WHERE user_id = ?`, [id]);
         if (error) {
@@ -19,12 +19,12 @@ export class ReviewService {
         if (status === 1) { return result }
         return null
     };
-    static async getReviewsByAuthorId(id:number){
-        const { result , status, error} = await GetAllData(db,'SELECT * FROM reviews WHERE author_id = ?', [id]);
-        if (error){
+    static async getReviewsByAuthorId(id: number) {
+        const { result, status, error } = await GetAllData(db, 'SELECT * FROM reviews WHERE author_id = ?', [id]);
+        if (error) {
             throw error
         }
-        if (status === 1){
+        if (status === 1) {
             return result
         }
         return null
@@ -68,14 +68,14 @@ export class ReviewService {
             throw new Error("Failed to update rating");
         }
     };
-    static async deleteReview(id: number ,user_id: number) {
-        try{
+    static async deleteReview(id: number, user_id: number) {
+        try {
             const { error } = await insertRecord(db, 'DELETE FROM reviews WHERE id = ? AND author_id = ?', [id, user_id]);
             if (error) {
                 throw new Error(`Database error: ${error}`);
             }
             return { message: 'Review deleted successfully', success: true };
-        } catch (error){
+        } catch (error) {
             throw error
         }
     }

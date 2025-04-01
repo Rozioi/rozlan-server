@@ -6,7 +6,7 @@ import { compareHash, hashPassword } from "../utils/hash";
 
 
 export class UserService {
-    
+
     static async deleteAccount(id: number) {
         try {
             const { result, status, error } = await insertRecord(db, 'DELETE FROM users WHERE id = ?', [id]);

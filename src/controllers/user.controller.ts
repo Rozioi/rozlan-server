@@ -17,7 +17,7 @@ export interface User {
 
 
 export const userController = {
-    
+
 
     async toogleAccountStatus(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
         const id = parseInt(req.params.id);

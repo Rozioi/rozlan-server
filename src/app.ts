@@ -4,6 +4,7 @@ import fastifyCors from "@fastify/cors";
 import jwtPlugin from "./plugins/jwt";
 import { UserRoutes } from "./routes/user.route";
 import { ReviewRoute } from "./routes/review.route";
+import { CategoriesRoute } from "./routes/categories.route";
 export const app = Fastify({
 	logger: true,
 });
@@ -15,6 +16,6 @@ FastifyRoute(
 	{
 		fastify: app,
 	},
-	[UserRoutes,ReviewRoute],
+	[UserRoutes, ReviewRoute, CategoriesRoute],
 	{ prefix: "/api/v1/" }
 )
